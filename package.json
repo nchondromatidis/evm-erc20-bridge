@@ -1,5 +1,6 @@
 {
   "name": "evm-erc20-bridge",
+  "description": "A sample erc20 bridge that transfers assets between two evm chains",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
