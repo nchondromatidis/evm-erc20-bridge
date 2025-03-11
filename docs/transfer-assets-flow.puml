@@ -1,0 +1,93 @@
+@startuml
+participant "UserA \n Account" as UA
+participant "Bridge Service" as B
+participant ChainA as CA
+participant ChainB as CB
+
+== Setup ==
+CA -> CA: start hardhat CA
+CB -> CB: start hardhat CB
+|||
+B -> CA: deploy: ERC20 TokenA, init 1M tokens to bridge account
+B -> CA: transfer: Bridge -> UserA, UserB: 10K TokenA
+|||
+B -> CB: deploy: ERC20 TokenA, init 1M tokens to bridge account
+B -> CB: transfer: Bridge -> UserA, UserB: 10K TokenA
+|||
+B -> B: init db.userA
+B -> B: init db.userB
+
+== ==
+note across
+//Design considerations//
+- No double spend
+- When system crashes/restarts at any step it can safely resume
+end note
+
+note across
+//Sending Eth transaction//
+Create a service for every interaction with ethereum that
+- receives the transfer object id
+- persists a nonce before sending a tx to reuse in case of crash/restart
+end note
+
+== Bridge Tasks ==
+B -> B: init: sync balance for a specific block (blockA)
+B -> B: init: listen event //ERC20.Transfer// from bridge, users from blockA to latest
+note left
+Event handlers atomically
+- persist events
+- update balances
+end note
+
+
+== Transfer Flow ==
+note across
+transfer object (to)
+ {
+     sender: UserA,
+     token: { address: TokenA, amount: 100 },
+     targetChain: { chainId: ChainB, receiver: UserB},
+     refund: { chainId: ChainA, tx: <transfer 100 TokenA to bridge account [ignore fees]>, signedTx: <signed tx> },
+     signature: String,
+ }
+end note
+
+UA -> B: send singed //transfer object//
+B -> B: persist **INIT** & transfer object
+
+group Transfer Object Validation:
+B -> B : check if transaction object exists
+B -> CA: check amount //db.userA.chainA.balance// >= 100 TokenA
+B -> CB: check //db.bridge.balance// >= 100 TokenA
+B -> CA: check amount //to.refund.tx// amount === 100 TokenA [ignore fees]
+B -> CA: check signature //to.refund.signedTx// against //db.userA.chainA.address//
+B -> B: sign message
+B -> B: persist: **TRANSFER_OBJECT_VALIDATED** & //db.userA.to.signature// & //db.userA.balance.lockedAmount//
+end
+
+group Transfer - state machine [should use sc to bundle txs + transfer-id or bridge]:
+
+group Source Chain Transfer:
+B -> CA: check amount //db.userA.chainA.balance// >= 100 TokenA
+B -> CA: **execute**: to.refund.signedTx
+B -> B: persist **SOURCE_CHAIN_TRANSFER_PENDING** [exercise says to do it at the end, but it is safe to it before]
+B -> CA: wait //ERC20.Transfer// from/to/value to be received
+B -> B: persist **SOURCE_CHAIN_TRANSFER_COMMITED** & remove ERC20.Transfer event
+B -> CA: wait: finality (config value)
+B -> B: persist **SOURCE_CHAIN_TRANSFER_FINALIZED**
+end
+
+group Destination Chain Transfer:
+B -> CB: check //db.bridge.balance// >= 100 TokenA
+B -> CB: **transfer**: 100 TokenA from bridge to UserB
+B -> B: persist **TARGET_CHAIN_TRANSFER_PENDING**
+B -> B: wait //ERC20.Transfer// from/to/value to be received & remove ERC20.Transfer event
+B -> B: persist **TARGET_CHAIN_TRANSFER_COMMITED**
+B -> CB: wait: finality (config value)
+B -> B: persist **TARGET_CHAIN_TRANSFER_FINALIZED** & remove to amount to //db.userA.balance.lockedAmount//
+end
+
+end
+
+@enduml
