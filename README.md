@@ -5,13 +5,14 @@
 The system is not complete. You can only run some tests.
 > npm run test --workspace=bridge-service
 
+### Docs
+You may also take a look at the docs where I created a sequence diagram before
+I started coding the solution.
 
 ### Architecture
 The architectural style used is ports and adapters architecture.
 
-
 <img src="https://sd.blackball.lv/data/items/202405/19658/03-hexagonal-architecture.v2-600x431.png" width="300"/>
-
 
 This way we can have all of our chain independent algorithms in 
 the center and use chain/app specific adapters to get/execute specific tasks.
