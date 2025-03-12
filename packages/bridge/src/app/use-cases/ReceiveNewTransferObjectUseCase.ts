@@ -3,7 +3,7 @@ import { SignatureError } from '../domain/_DomainErrors';
 import { IBridgeRepo } from '../ports/IBridgeRepo';
 import { Config } from '../ports/IConfigPort';
 
-export class ReceiveNewTransferObject {
+export class ReceiveNewTransferObjectUseCase {
   constructor(
     private config: Config,
     private bridgeRepo: IBridgeRepo,

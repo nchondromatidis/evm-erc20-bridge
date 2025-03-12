@@ -1,15 +1,15 @@
 import { bridgeTestConfig, getDefaultTransferObject } from '../../_utils/testUtils';
 import { FileSystemBridgeRepo } from '../../../src/adapters/repository/FileSystemBridgeRepo';
-import { ReceiveNewTransferObject } from '../../../src/app/use-cases/ReceiveNewTransferObject';
+import { ReceiveNewTransferObjectUseCase } from '../../../src/app/use-cases/ReceiveNewTransferObjectUseCase';
 import { getTestAccounts } from '../../_utils/accounts';
 import { EthereumUtils } from '../../../src/_common/EthereumUtils';
 
-describe('ReceiveNewTransferObject', () => {
+describe('ReceiveNewTransferObjectUseCase', () => {
   it('when valid transfer object is received, then is it added in the queue', async () => {
     // arrange
     const bridgeRepo = new FileSystemBridgeRepo(bridgeTestConfig);
     await bridgeRepo.init(true);
-    const receiveNewTransferObject = new ReceiveNewTransferObject(
+    const receiveNewTransferObject = new ReceiveNewTransferObjectUseCase(
       bridgeTestConfig,
       bridgeRepo,
     );
@@ -38,7 +38,7 @@ describe('ReceiveNewTransferObject', () => {
     // arrange
     const bridgeRepo = new FileSystemBridgeRepo(bridgeTestConfig);
     await bridgeRepo.init(true);
-    const receiveNewTransferObject = new ReceiveNewTransferObject(
+    const receiveNewTransferObject = new ReceiveNewTransferObjectUseCase(
       bridgeTestConfig,
       bridgeRepo,
     );
