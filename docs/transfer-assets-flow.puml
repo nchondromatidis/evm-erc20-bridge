@@ -8,11 +8,11 @@ participant ChainB as CB
 CA -> CA: start hardhat CA
 CB -> CB: start hardhat CB
 |||
-B -> CA: deploy: ERC20 TokenA, init 1M tokens to bridge account
-B -> CA: transfer: Bridge -> UserA, UserB: 10K TokenA
+B -> CA: deploy: ERC20 TokenA, init tokens to bridge account
+B -> CA: transfer tokens to users
 |||
-B -> CB: deploy: ERC20 TokenA, init 1M tokens to bridge account
-B -> CB: transfer: Bridge -> UserA, UserB: 10K TokenA
+B -> CB: deploy: ERC20 TokenA, init tokens to bridge account
+B -> CB: transfer tokens to users
 |||
 B -> B: init db.userA
 B -> B: init db.userB
@@ -54,7 +54,7 @@ transfer object (to)
 end note
 
 UA -> B: send singed //transfer object//
-B -> B: persist **INIT** & transfer object
+B -> B: persist **RECEIVED** & transfer object
 
 group Transfer Object Validation:
 B -> B : check if transaction object exists

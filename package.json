@@ -27,7 +27,9 @@
     "typescript-eslint": "^8.26.0"
   },
   "dependencies": {
+    "class-transformer": "^0.5.1",
     "ethers": "^5.8.0",
+    "reflect-metadata": "^0.2.2",
     "runtypes": "^7.0.4"
   }
 }
