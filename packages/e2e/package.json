@@ -1,0 +1,13 @@
+{
+  "name": "solver-servcice",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest",
+    "lint": "eslint",
+    "lint:fix": "eslint --fix"
+  },
+  "devDependencies": {
+    "bridge-service": "1.0.0"
+  }
+}

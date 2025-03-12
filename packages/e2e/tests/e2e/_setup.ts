@@ -3,8 +3,8 @@ import * as hre from 'hardhat';
 import * as path from 'node:path';
 import * as fs from 'node:fs';
 import { BigNumber, ethers, Signer } from 'ethers';
-import { Config } from '../../src/app/ports/IConfigPort';
-import { getTestAccounts } from '../_utils/accounts';
+import { Config } from 'bridge-service/src/app/ports/IConfigPort';
+import { getTestAccounts } from 'bridge-service/tests/_utils/accounts';
 
 const artifactsBasePath = path.join(
   __dirname,

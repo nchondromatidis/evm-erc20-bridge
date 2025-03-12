@@ -1,7 +1,7 @@
 import { ChildProcess } from 'child_process';
 import { ethers } from 'ethers';
 import { setupSystem } from './_setup';
-import { getTestAccounts } from '../_utils/accounts';
+import { getTestAccounts } from 'bridge-service/tests/_utils/accounts';
 
 jest.setTimeout(20000);
 
