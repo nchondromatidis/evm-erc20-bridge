@@ -118,18 +118,17 @@ export async function setupSystem(
   );
   await tx.wait();
 
-  const testConfig: Config = {
+  const bridgeTestConfig: Config = {
+    BRIDGE_ACCOUNT_ADDRESS: getTestAccounts().bridge.address,
+    BRIDGE_ACCOUNT_PK: getTestAccounts().bridge.privateKey,
+
     CHAIN_A_URL: chainAUrl,
     CHAIN_A_PORT: chainAPort,
-    CHAIN_A_SOLVER_ACCOUNT_PK: getTestAccounts().chainA.solver.privateKey,
-    CHAIN_A_TOKEN_A_ADDRESS: chainATokenASolverAccountContract.address,
-    CHAIN_A_TOKEN_B_ADDRESS: chainATokenBSolverAccountContract.address,
+    CHAIN_A_SOLVER_ACCOUNT_ADDRESS: getTestAccounts().chainA.solver.address,
 
     CHAIN_B_URL: chainBUrl,
     CHAIN_B_PORT: chainBPort,
-    CHAIN_B_SOLVER_ACCOUNT_PK: getTestAccounts().chainB.solver.privateKey,
-    CHAIN_B_TOKEN_A_ADDRESS: chainBTokenASolverAccountContract.address,
-    CHAIN_B_TOKEN_B_ADDRESS: chainBTokenBSolverAccountContract.address,
+    CHAIN_B_SOLVER_ACCOUNT_ADDRESS: getTestAccounts().chainB.solver.address,
   };
 
   return {
@@ -139,6 +138,6 @@ export async function setupSystem(
     chainATokenBSolverAccountContract,
     chainBTokenASolverAccountContract,
     chainBTokenBSolverAccountContract,
-    testConfig,
+    bridgeTestConfig,
   };
 }

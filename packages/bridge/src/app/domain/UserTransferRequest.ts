@@ -1,6 +1,6 @@
 import { Address } from './Bridge';
-import { ethers } from 'ethers';
 import { SignatureError } from './_DomainErrors';
+import { EthereumUtils } from '../../_common/EthereumUtils';
 
 export type TransferObject = {
   sender: Address;
@@ -20,23 +20,21 @@ export type TransferObject = {
   signature: string;
 };
 
-enum UserTransferState {
+export enum UserTransferState {
   RECEIVED,
   TRANSFER_OBJECT_VALIDATED,
-  SOURCE_CHAIN_TRANSFER_PENDING,
-  SOURCE_CHAIN_TRANSFER_COMMITED,
-  SOURCE_CHAIN_TRANSFER_FINALIZED,
-  TARGET_CHAIN_TRANSFER_PENDING,
-  TARGET_CHAIN_TRANSFER_COMMITED,
   TARGET_CHAIN_TRANSFER_FINALIZED,
+  SOURCE_CHAIN_TRANSFER_FINALIZED,
 }
 
 export class UserTransferRequest {
   readonly id: string;
   state: UserTransferState;
+  signature: string;
 
   constructor(private readonly transferObject: TransferObject) {
     // TODO: validate fields (non zero, empty)
+    // TODO: verifyRefundTx data
     this.verifySignatures(transferObject);
 
     // NOTE: I could create an id based on fields
@@ -44,13 +42,19 @@ export class UserTransferRequest {
     this.state = UserTransferState.RECEIVED;
   }
 
+  /*
+   * Verifies:
+   * - transferObject.refund.signedTx against transferObject.refund.tx and sender address
+   * - transferObject.signature signature against JSON.stringy(transferObject) and sender address
+   */
   private verifySignatures(transferObject: TransferObject) {
     // verify transferObject.refund.signedTx
-    const recoveredAddress1 = ethers.utils.verifyMessage(
+    const isRefundSignatureValid = EthereumUtils.isEthereumSignatureValid(
       transferObject.refund.tx,
       transferObject.refund.signedTx,
+      transferObject.sender,
     );
-    if (recoveredAddress1 !== transferObject.sender) {
+    if (!isRefundSignatureValid) {
       throw new SignatureError(`transferObject.refund.signedTx.signature is invalid.`);
     }
 
@@ -71,22 +75,23 @@ export class UserTransferRequest {
         signedTx: transferObject.refund.signedTx,
       },
     };
-
     const transferObjectDataString = JSON.stringify(transferObjectData);
-    const recoveredAddress2 = ethers.utils.verifyMessage(
+    const isTransferObjectSignatureValid = EthereumUtils.isEthereumSignatureValid(
       transferObjectDataString,
       transferObject.signature,
+      transferObject.sender,
     );
-    if (recoveredAddress2 !== transferObject.sender) {
+
+    if (!isTransferObjectSignatureValid) {
       throw new SignatureError(`transferObject.signature is invalid.`);
     }
   }
 
-  equals(other: UserTransferRequest) {
-    return this.id === other.id;
-  }
-
   updateState(state: UserTransferState) {
     this.state = state;
+  }
+
+  async addSignature(pk: string) {
+    this.signature = await EthereumUtils.signMessage(JSON.stringify(this), pk);
   }
 }

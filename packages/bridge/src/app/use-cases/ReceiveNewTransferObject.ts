@@ -1,15 +1,18 @@
-import { TransferObject, UserTransferRequest } from '../domain/UserTransferRequest';
+import { TransferObject } from '../domain/UserTransferRequest';
 import { SignatureError } from '../domain/_DomainErrors';
 import { IBridgeRepo } from '../ports/IBridgeRepo';
+import { Config } from '../ports/IConfigPort';
 
 export class ReceiveNewTransferObject {
-  constructor(private bridgeRepo: IBridgeRepo) {}
+  constructor(
+    private config: Config,
+    private bridgeRepo: IBridgeRepo,
+  ) {}
 
   async handle(transferObject: TransferObject): Promise<void> {
     try {
       const bridge = await this.bridgeRepo.get();
-      const userTransferRequest = new UserTransferRequest(transferObject);
-      bridge.addTransferObject(userTransferRequest);
+      await bridge.addTransferObject(transferObject);
     } catch (e) {
       if (e instanceof SignatureError) return;
       console.error(e);

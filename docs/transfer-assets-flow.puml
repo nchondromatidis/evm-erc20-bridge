@@ -30,8 +30,8 @@ B -> B: persist **RECEIVED** & transfer object
 
 group Transfer Object Validation:
 B -> B : check if transaction object already exists
-B -> CA: check amount //db.userA.chainA.balance// >= 100 TokenA
-B -> CA: check //to.refund.tx//: from == UserA & to == Relay Account & amount === 100 TokenA [ignore fees]
+B -> CA: check amount //db.userA.chainA.balance - db.userA.balance.lockedAmount// >= 100 TokenA
+B -> CA: verify //to.refund.tx// [skipped]
 B -> B: check signature //to.refund.signedTx//
 B -> B: sign message
 B -> B: persist: **TRANSFER_OBJECT_VALIDATED** & //db.userA.to.signature// & //db.userA.balance.lockedAmount//
@@ -51,7 +51,7 @@ end
 B -> S: periodically request finality (interface)
 B -> B: persist **TARGET_CHAIN_TRANSFER_FINALIZED** & remove to amount to //db.userA.balance.lockedAmount//
 
-group Refund Solver Account
+group Refund Solver Account [he could approve]:
 B -> CA: **execute**: to.refund.signedTx
 note right: ignore crash safety
 B -> B: persist **SOURCE_CHAIN_TRANSFER_FINALIZED**

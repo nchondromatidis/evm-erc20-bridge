@@ -2,11 +2,12 @@ import { ChildProcess } from 'child_process';
 import { ethers } from 'ethers';
 import { setupSystem } from './_setup';
 import { getTestAccounts } from 'bridge-service/tests/_utils/accounts';
+import { EthereumUtils } from 'bridge-service/src/_common/EthereumUtils';
 
 jest.setTimeout(20000);
 
-const initialErc20Supply = ethers.utils.parseUnits('1000', 'gwei');
-const usersErc20Funds = ethers.utils.parseUnits('100', 'gwei');
+const initialErc20Supply = EthereumUtils.toWei('1000');
+const usersErc20Funds = EthereumUtils.toWei('100');
 
 describe('transfer-flow', () => {
   let chainAProcess: ChildProcess;

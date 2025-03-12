@@ -2,6 +2,7 @@ import { randomBytes } from 'node:crypto';
 import { ethers, Wallet } from 'ethers';
 import { TransferObject } from '../../src/app/domain/UserTransferRequest';
 import { getTestAccounts } from './accounts';
+import { Address } from '../../src/app/domain/Bridge';
 
 export function getRandomAddress() {
   const randomWallet = ethers.Wallet.createRandom();
@@ -39,23 +40,28 @@ export async function getSignedTransferObject(
   };
 }
 
-export async function getDefaultTransferObject(): Promise<TransferObject> {
+export async function getDefaultTransferObject(
+  sender: Address,
+  amount: number,
+  targetChainId = 1,
+  refundChainId = 1,
+): Promise<TransferObject> {
   const txData = getRandomString(100);
   const chainAUserAWallet = new Wallet(getTestAccounts().chainA.userA.privateKey);
   const signedTx = await chainAUserAWallet.signMessage(txData);
 
   const transferObjectData: Omit<TransferObject, 'signature'> = {
-    sender: getTestAccounts().chainA.userA.address,
+    sender: sender,
     token: {
       address: getRandomAddress(),
-      amount: 10,
+      amount: amount,
     },
     targetChain: {
-      chainId: 1,
+      chainId: targetChainId,
       receiver: getRandomAddress(),
     },
     refund: {
-      chainId: 1,
+      chainId: refundChainId,
       tx: txData,
       signedTx: signedTx,
     },
