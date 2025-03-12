@@ -124,7 +124,7 @@ const hardhatNodeAccounts = [
 export function getTestAccounts() {
   return {
     chainA: {
-      bridge: {
+      solver: {
         address: hardhatNodeAccounts[0].address,
         privateKey: hardhatNodeAccounts[0].privateKey,
       },
@@ -138,7 +138,7 @@ export function getTestAccounts() {
       },
     },
     chainB: {
-      bridge: {
+      solver: {
         address: hardhatNodeAccounts[10].address,
         privateKey: hardhatNodeAccounts[10].privateKey,
       },

@@ -12,14 +12,14 @@ describe('transfer-flow', () => {
   let chainAProcess: ChildProcess;
   let chainBProcess: ChildProcess;
 
-  let chainATokenABridgeAccountContract: ethers.Contract;
+  let chainATokenASolverAccountContract: ethers.Contract;
 
   beforeAll(async () => {
     const system = await setupSystem(initialErc20Supply, usersErc20Funds);
     chainAProcess = system.chainAProcess;
     chainBProcess = system.chainBProcess;
 
-    chainATokenABridgeAccountContract = system.chainATokenABridgeAccountContract;
+    chainATokenASolverAccountContract = system.chainATokenASolverAccountContract;
   });
 
   afterAll(() => {
@@ -30,7 +30,7 @@ describe('transfer-flow', () => {
   it('happy path', async () => {
     // arrange
     const chainAUserATokenABalanceBefore =
-      await chainATokenABridgeAccountContract.balanceOf(
+      await chainATokenASolverAccountContract.balanceOf(
         getTestAccounts().chainA.userA.address,
       );
 

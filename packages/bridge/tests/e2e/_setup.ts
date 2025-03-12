@@ -72,16 +72,16 @@ export async function setupSystem(
   const chainAUrl = 'http://127.0.0.1:8545/';
 
   const chainAProvider = new ethers.providers.JsonRpcProvider(chainAUrl);
-  const bridgeAccountChainASinger = new ethers.Wallet(
-    getTestAccounts().chainA.bridge.privateKey,
+  const solverAccountChainASinger = new ethers.Wallet(
+    getTestAccounts().chainA.solver.privateKey,
     chainAProvider,
   );
 
   const chainBUrl = 'http://127.0.0.1:8545/';
 
   const chainBProvider = new ethers.providers.JsonRpcProvider(chainBUrl);
-  const bridgeAccountChainBSinger = new ethers.Wallet(
-    getTestAccounts().chainB.bridge.privateKey,
+  const solverAccountChainBSinger = new ethers.Wallet(
+    getTestAccounts().chainB.solver.privateKey,
     chainBProvider,
   );
 
@@ -89,30 +89,30 @@ export async function setupSystem(
   await hre.run('compile');
 
   // deploy erc20 contracts
-  const chainATokenABridgeAccountContract = await deployContract(
+  const chainATokenASolverAccountContract = await deployContract(
     'TokenA',
-    bridgeAccountChainASinger,
+    solverAccountChainASinger,
     [initialErc20Supply],
   );
-  const chainATokenBBridgeAccountContract = await deployContract(
+  const chainATokenBSolverAccountContract = await deployContract(
     'TokenB',
-    bridgeAccountChainASinger,
+    solverAccountChainASinger,
     [initialErc20Supply],
   );
 
-  const chainBTokenABridgeAccountContract = await deployContract(
+  const chainBTokenASolverAccountContract = await deployContract(
     'TokenA',
-    bridgeAccountChainBSinger,
+    solverAccountChainBSinger,
     [initialErc20Supply],
   );
-  const chainBTokenBBridgeAccountContract = await deployContract(
+  const chainBTokenBSolverAccountContract = await deployContract(
     'TokenB',
-    bridgeAccountChainBSinger,
+    solverAccountChainBSinger,
     [initialErc20Supply],
   );
 
   // fund users with tokens
-  const tx = await chainATokenABridgeAccountContract.transfer(
+  const tx = await chainATokenASolverAccountContract.transfer(
     getTestAccounts().chainA.userA.address,
     usersErc20Supply,
   );
@@ -121,24 +121,24 @@ export async function setupSystem(
   const testConfig: Config = {
     CHAIN_A_URL: chainAUrl,
     CHAIN_A_PORT: chainAPort,
-    CHAIN_A_BRIDGE_ACCOUNT_PK: getTestAccounts().chainA.bridge.privateKey,
-    CHAIN_A_TOKEN_A_ADDRESS: chainATokenABridgeAccountContract.address,
-    CHAIN_A_TOKEN_B_ADDRESS: chainATokenBBridgeAccountContract.address,
+    CHAIN_A_SOLVER_ACCOUNT_PK: getTestAccounts().chainA.solver.privateKey,
+    CHAIN_A_TOKEN_A_ADDRESS: chainATokenASolverAccountContract.address,
+    CHAIN_A_TOKEN_B_ADDRESS: chainATokenBSolverAccountContract.address,
 
     CHAIN_B_URL: chainBUrl,
     CHAIN_B_PORT: chainBPort,
-    CHAIN_B_BRIDGE_ACCOUNT_PK: getTestAccounts().chainB.bridge.privateKey,
-    CHAIN_B_TOKEN_A_ADDRESS: chainBTokenABridgeAccountContract.address,
-    CHAIN_B_TOKEN_B_ADDRESS: chainBTokenBBridgeAccountContract.address,
+    CHAIN_B_SOLVER_ACCOUNT_PK: getTestAccounts().chainB.solver.privateKey,
+    CHAIN_B_TOKEN_A_ADDRESS: chainBTokenASolverAccountContract.address,
+    CHAIN_B_TOKEN_B_ADDRESS: chainBTokenBSolverAccountContract.address,
   };
 
   return {
     chainAProcess,
     chainBProcess,
-    chainATokenABridgeAccountContract,
-    chainATokenBBridgeAccountContract,
-    chainBTokenABridgeAccountContract,
-    chainBTokenBBridgeAccountContract,
+    chainATokenASolverAccountContract,
+    chainATokenBSolverAccountContract,
+    chainBTokenASolverAccountContract,
+    chainBTokenBSolverAccountContract,
     testConfig,
   };
 }
