@@ -1,7 +1,7 @@
 import { ChildProcess } from 'child_process';
 import { ethers } from 'ethers';
-import { setupSystem } from '../_setup/testUtils';
-import { getTestAccounts } from '../_setup/accounts';
+import { setupSystem } from './_setup';
+import { getTestAccounts } from '../_utils/accounts';
 
 jest.setTimeout(20000);
 

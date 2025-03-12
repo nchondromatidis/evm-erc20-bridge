@@ -4,7 +4,7 @@ import * as path from 'node:path';
 import * as fs from 'node:fs';
 import { BigNumber, ethers, Signer } from 'ethers';
 import { Config } from '../../src/app/ports/IConfigPort';
-import { getTestAccounts } from './accounts';
+import { getTestAccounts } from '../_utils/accounts';
 
 async function startHardhatNode(port: number) {
   const hardhatNode = spawn('npx', ['hardhat', 'node', '--port', `${port}`], {
