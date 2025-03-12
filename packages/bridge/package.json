@@ -1,0 +1,11 @@
+{
+  "name": "evm-erc20-bridge",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc -project tsconfig.build.json",
+    "test": "jest",
+    "lint": "eslint",
+    "lint:fix": "eslint --fix"
+  }
+}

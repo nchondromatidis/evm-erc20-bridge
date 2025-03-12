@@ -1,8 +1,5 @@
 .idea/
-dist/
 node_modules/
 
 artifacts/
 cache/
-
-src/adapters/repository/data/*.json

@@ -6,6 +6,16 @@ import { BigNumber, ethers, Signer } from 'ethers';
 import { Config } from '../../src/app/ports/IConfigPort';
 import { getTestAccounts } from '../_utils/accounts';
 
+const artifactsBasePath = path.join(
+  __dirname,
+  '..',
+  '..',
+  '..',
+  '..',
+  'artifacts',
+  'contracts',
+);
+
 async function startHardhatNode(port: number) {
   const hardhatNode = spawn('npx', ['hardhat', 'node', '--port', `${port}`], {
     detached: true,
@@ -25,11 +35,7 @@ async function deployContract(
 ) {
   // Path to the compiled contract artifacts
   const artifactsPath = path.join(
-    __dirname,
-    '..',
-    '..',
-    'artifacts',
-    'contracts',
+    artifactsBasePath,
     `${contractName}.sol`,
     `${contractName}.json`,
   );
@@ -42,7 +48,7 @@ async function deployContract(
   const bytecode = contractArtifact.bytecode;
 
   // Create a contract factory
-  const contractFactory = new hre.ethers.ContractFactory(abi, bytecode, signer);
+  const contractFactory = new ethers.ContractFactory(abi, bytecode, signer);
 
   // Deploy the contract
   const contract = await contractFactory.deploy(...constructorArgs);
@@ -74,7 +80,7 @@ export async function setupSystem(
   const chainBUrl = 'http://127.0.0.1:8545/';
 
   const chainBProvider = new ethers.providers.JsonRpcProvider(chainBUrl);
-  const bridgeAccountChainBSinger = new hre.ethers.Wallet(
+  const bridgeAccountChainBSinger = new ethers.Wallet(
     getTestAccounts().chainB.bridge.privateKey,
     chainBProvider,
   );
