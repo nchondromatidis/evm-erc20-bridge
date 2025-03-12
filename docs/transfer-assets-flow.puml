@@ -6,7 +6,7 @@ participant ChainA as CA
 participant ChainB as CB
 
 == Bridge Tasks ==
-B -> B: init: sync balance for a specific block (blockA)
+B -> B: init: sync balance for a specific block (blockA) [ignore always start from first block]
 B -> B: init: listen event //ERC20.Transfer// users from blockA to latest
 note left
 Event handlers will update user balances
@@ -39,6 +39,7 @@ end
 
 group Cross Chain Transfer
 B -> S: request transfer (interface)
+note right: ignore crash safety
 
 group Relay to Solver [not the focus of the exercise]:
 S -> S: validate signatures

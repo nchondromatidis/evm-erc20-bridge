@@ -3,8 +3,8 @@ import * as hre from 'hardhat';
 import * as path from 'node:path';
 import * as fs from 'node:fs';
 import { BigNumber, ethers, Signer } from 'ethers';
-import { Config } from 'bridge-service/src/app/ports/IConfigPort';
-import { getTestAccounts } from 'bridge-service/tests/_utils/accounts';
+import { Config } from '../../src/app/ports/IConfigPort';
+import { getTestAccounts } from '../_utils/accounts';
 
 const artifactsBasePath = path.join(
   __dirname,
@@ -15,6 +15,22 @@ const artifactsBasePath = path.join(
   'artifacts',
   'contracts',
 );
+
+async function startChainA() {
+  const hardhatNode = spawn('npx', ['hardhat', 'node'], {
+    detached: true,
+    stdio: 'ignore',
+  });
+
+  // Wait for Hardhat node to start
+  await new Promise((resolve) => setTimeout(resolve, 5000));
+
+  return hardhatNode;
+}
+
+async function startChainB() {
+  return await startHardhatNode(8546);
+}
 
 async function startHardhatNode(port: number) {
   const hardhatNode = spawn('npx', ['hardhat', 'node', '--port', `${port}`], {
@@ -65,8 +81,8 @@ export async function setupSystem(
   const chainAPort = 8545;
   const chainBPort = 8545;
 
-  const chainAProcess = await startHardhatNode(chainAPort);
-  const chainBProcess = await startHardhatNode(chainBPort);
+  const chainAProcess = await startChainA();
+  const chainBProcess = await startChainB();
 
   // get deployers
   const chainAUrl = 'http://127.0.0.1:8545/';
@@ -122,13 +138,19 @@ export async function setupSystem(
     BRIDGE_ACCOUNT_ADDRESS: getTestAccounts().bridge.address,
     BRIDGE_ACCOUNT_PK: getTestAccounts().bridge.privateKey,
 
+    CHAIN_A_ID: 1337,
     CHAIN_A_URL: chainAUrl,
     CHAIN_A_PORT: chainAPort,
     CHAIN_A_SOLVER_ACCOUNT_ADDRESS: getTestAccounts().chainA.solver.address,
+    CHAIN_A_TOKEN_A_ADDRESS: chainATokenASolverAccountContract.address,
+    CHAIN_A_TOKEN_B_ADDRESS: chainATokenBSolverAccountContract.address,
 
+    CHAIN_B_ID: 31337,
     CHAIN_B_URL: chainBUrl,
     CHAIN_B_PORT: chainBPort,
     CHAIN_B_SOLVER_ACCOUNT_ADDRESS: getTestAccounts().chainB.solver.address,
+    CHAIN_B_TOKEN_A_ADDRESS: chainBTokenASolverAccountContract.address,
+    CHAIN_B_TOKEN_B_ADDRESS: chainBTokenBSolverAccountContract.address,
   };
 
   return {

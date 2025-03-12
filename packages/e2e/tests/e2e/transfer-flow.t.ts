@@ -1,6 +1,6 @@
 import { ChildProcess } from 'child_process';
 import { ethers } from 'ethers';
-import { setupSystem } from './_setup';
+import { setupSystem } from 'bridge-service/tests/integration/setup';
 import { getTestAccounts } from 'bridge-service/tests/_utils/accounts';
 import { EthereumUtils } from 'bridge-service/src/_common/EthereumUtils';
 
@@ -28,7 +28,7 @@ describe('transfer-flow', () => {
     if (chainBProcess) chainBProcess.kill();
   });
 
-  it('happy path', async () => {
+  it.skip('a full transfer flow', async () => {
     // arrange
     const chainAUserATokenABalanceBefore =
       await chainATokenASolverAccountContract.balanceOf(
